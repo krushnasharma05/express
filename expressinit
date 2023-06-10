@@ -1,21 +1,57 @@
+1) app.js FILE:
+
 const express = require('express');
 
 const app = express();
 
+const adminroutes= require('./routes/admin');
+const shoproutes= require('./routes/shop');
+
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/add-product', (req, res, next) => {
-  res.send('<form action="/product" method="POST"><input type="text" name="title" placeholder="product name"> <input type="text" name="size" placeholder="product size"> <button type="submit">Add product</button></form>');
-});
+app.use('/admin',adminroutes);
 
-app.post('/product', (req, res, next) => {
-  const {title,size}= req.body; 
-  console.log('Product Title:', title);
-  console.log('Product Size:', size);
-  res.redirect('/');
-});
+app.use('/shop',shoproutes);
 
-app.use('/', (req, res, next) => {
-  res.send('<h1>hello</h1>');
-});
+app.use((req,res,next) => {
+     res.status(404).send('<h1>PAGE NOT FOUND</h1>');
+})
+
 app.listen(3000);
+
+
+
+
+2)admin.js FILE:
+
+const express = require('express');
+
+const router = express.Router();
+
+router.get('/add-product', (req, res, next) => {
+    res.send('<form action="/admin/add-product" method="POST"><input type="text" name="title" placeholder="product name"> <input type="text" name="size" placeholder="product size"> <button type="submit">Add product</button></form>');
+  });
+  
+router.post('/add-product', (req, res, next) => {
+    const {title,size}= req.body; 
+    console.log('Product Title:', title);
+    console.log('Product Size:', size);
+    res.redirect('/shop');
+  });
+
+module.exports=router;
+
+
+
+3) shop.js FILE:
+
+const express = require('express');
+
+const router = express.Router();
+
+router.get('/', (req, res, next) => {
+    res.send('<h1>hello</h1>');
+  });
+  
+module.exports=router;  
+
